@@ -348,13 +348,29 @@
         card.innerHTML = `
           <div><strong>Inscrição ${idx + 1}</strong></div>
           <div>Data: ${formatDate(item.timestamp)}</div>
-          ${item.enrollmentId ? `<div>Enrollment ID: ${item.enrollmentId}</div>` : ''}
+          <div style="display:flex; align-items:center; gap:4px; margin-top:2px;"
+               title="Identifica esse registro específico do lead nesse fluxo — usado para buscar o histórico de ações.">
+            <span>Object ID: <code>${item.objectId}</code></span>
+            <button class="hs-copy-btn" data-copy="${item.objectId}" title="Copiar"
+              style="border:none; background:none; cursor:pointer; font-size:12px; padding:0 2px;">📋</button>
+          </div>
           <button class="hs-history-btn" style="
             margin-top:6px; background:#00a4bd; color:#fff; border:none;
             padding:6px 10px; border-radius:4px; cursor:pointer; font-size:12px;
           ">Ver histórico completo</button>
           <div class="hs-history-container" style="display:none; margin-top:8px; padding-top:8px; border-top:1px solid #e5eaf0;"></div>
         `;
+
+        card.querySelectorAll('.hs-copy-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const value = btn.getAttribute('data-copy');
+            navigator.clipboard.writeText(value).then(() => {
+              const original = btn.textContent;
+              btn.textContent = '✓';
+              setTimeout(() => { btn.textContent = original; }, 1200);
+            }).catch(() => {});
+          });
+        });
 
         const historyBtn = card.querySelector('.hs-history-btn');
         const historyContainer = card.querySelector('.hs-history-container');
